@@ -37,10 +37,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const router: express.Router = express.Router()
-router.get('/api/ogp', async (req: Request<{}, {}, {}, GetORGParam>, res: Response, next: NextFunction) => {
+router.get('/ogp', async (req: Request<{}, {}, {}, GetORGParam>, res: Response, next: NextFunction) => {
   try {
     const result = await getURL(decode(req.query.url))
-    res.send(result)
+    res.json({image: result})
   } catch (err) {
     next(err.message)
   }

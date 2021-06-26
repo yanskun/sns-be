@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import axios from 'axios'
 import { JSDOM } from 'jsdom'
+import { decode } from 'js-base64'
 
 const getURL = async (url: string) => {
   const jsdom = new JSDOM()
@@ -36,9 +37,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const router: express.Router = express.Router()
-router.post('/api/ogp', async (req: Request<{}, {}, GetORGParam>, res: Response, next: NextFunction) => {
+router.get('/api/ogp', async (req: Request<{}, {}, {}, GetORGParam>, res: Response, next: NextFunction) => {
   try {
-    const result = await getURL(req.body.url)
+    const result = await getURL(decode(req.query.url))
     res.send(result)
   } catch (err) {
     next(err.message)

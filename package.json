@@ -1,13 +1,12 @@
 {
   "name": "door-server",
   "version": "1.0.0",
-  "main": "app.js",
   "repository": "ssh://git@github.com/yasudanaoya/door-server.git",
   "author": "yasudanaoya <43776161+yasudanaoya@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node app.ts",
-    "dev": "DEBUG=express:* ts-node app.ts"
+    "start": "ts-node src/app.ts",
+    "dev": "DEBUG=express:* ts-node src/app.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.12",

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { JSDOM } from 'jsdom'
 import { decode } from 'js-base64'
 
-const getURL = async (url: string) => {
+const getOGP = async (url: string) => {
   const jsdom = new JSDOM()
   const parser = new jsdom.window.DOMParser()
 
@@ -13,11 +13,32 @@ const getURL = async (url: string) => {
     .then((data) => {
       const el = parser.parseFromString(data, 'text/html')
       const headEls = el.head.children
+
+      // src
       const imageEl = Array.from(headEls).find(
         (e) => e.getAttribute('property') === 'og:image'
       )
-      if (!imageEl) return ''
-      return imageEl.getAttribute('content')
+      const src = !imageEl ? '' : imageEl.getAttribute('content') ?? ''
+      
+      // title
+      const titleEl = Array.from(headEls).find(
+        (e) => e.getAttribute('property') === 'og:title' || e.tagName === 'title' || e.tagName === 'TITLE'
+      )
+
+      const title = !titleEl ? '' : titleEl.textContent ?? ''
+
+      // title
+      const descriptionEl = Array.from(headEls).find(
+        (e) => e.getAttribute('property') === 'og:description' || e.getAttribute('name') === 'description' 
+      )
+      const description = !descriptionEl ? '' : descriptionEl.textContent ?? ''
+      
+      return {
+        href: url,
+        title,
+        description,
+        src,
+      }
     })
 }
 
@@ -39,8 +60,8 @@ app.use(express.urlencoded({ extended: true }))
 const router: express.Router = express.Router()
 router.get('/ogp', async (req: Request<{}, {}, {}, GetORGParam>, res: Response, next: NextFunction) => {
   try {
-    const result = await getURL(decode(req.query.url))
-    res.json({image: result})
+    const result = await getOGP(decode(req.query.url))
+    res.json(result)
   } catch (err) {
     next(err.message)
   }

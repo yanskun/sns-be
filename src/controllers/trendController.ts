@@ -35,7 +35,10 @@ export interface TrendController {
 const TrendController = {
   getTrends: async (req: Request, res: Response, next: NextFunction) => {
     connection.query(
-      'select trend.id, trend.comment, trend.created_at, trend.updated_at, ogp.href, ogp.title, ogp.description, ogp.src from trends trend inner join ogps ogp where ogp.trend_id = trend.id',
+      {
+        sql: 'select * from trends trend inner join ogps ogp where ogp.trend_id = trend.id',
+        nestTables: true,
+      },
       (error, results: Trend[], fields) => {
         if (error) throw error;
         res.json(results);

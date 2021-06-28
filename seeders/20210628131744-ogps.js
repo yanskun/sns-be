@@ -1,13 +1,11 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const now = new Date();
     return queryInterface.bulkInsert('ogps', [
       {
-        id: uuidv4(),
+        id: "8f286d58-3177-76c6-df70-f304fda42e3f",
         title: 'yasudanaoya · GitHub',
         description: "description",
         src: 'https://avatars.githubusercontent.com/u/43776161?v=4?s=400',

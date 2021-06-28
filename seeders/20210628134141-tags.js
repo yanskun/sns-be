@@ -1,13 +1,11 @@
 'use strict';
 
-const { v4: uuidv4 } = require('uuid');
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const now = new Date();
     return queryInterface.bulkInsert('tags', [
       {
-        id: uuidv4(),
+        id: "f4bb8614-240e-77ef-1f17-ff468e58cb9d",
         title: 'front',
         color: "green",
         textColor: "white",

@@ -1,0 +1,13 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: yarn run dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - '3300:3300'
+    volumes:
+      - .:/app

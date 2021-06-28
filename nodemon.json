@@ -3,5 +3,5 @@
     "src"
   ],
   "ext": "ts",
-  "exec": "DEBUG=express:* yarn run ts-node ./src/app.ts"
+  "exec": "yarn run ts-node ./src/app.ts"
 }

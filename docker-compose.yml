@@ -1,4 +1,8 @@
 version: '3'
+
+volumes:
+  mysqldata:
+
 services:
   api:
     build:
@@ -6,8 +10,30 @@ services:
       dockerfile: ./Dockerfile
     command: yarn run dev
     environment:
+      TZ: Asia/Tokyo
+      DEBUG: express:*
       NODE_ENV: development
     ports:
       - '3300:3300'
     volumes:
       - .:/app
+    networks:
+      - backend
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: mysql:5.7
+    env_file: ./mysql.env
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - backend
+
+networks:
+  backend:

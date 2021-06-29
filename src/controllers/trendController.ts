@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import mysql from 'mysql2';
+import async from 'async';
 import { Trend, OGP, Tag } from '../types';
 
 const connection = mysql.createConnection({
@@ -40,25 +41,32 @@ const TrendController = {
       async (error, results: GetTrendResult[], fields) => {
         if (error) throw error;
 
-        results.map((result) => {
-          connection.query(
-            {
-              sql: `select * from tags where tags.id in (SELECT trend_tags.tag_id FROM trend_tags WHERE trend_tags.trend_id = ?)`,
-              values: result.trend.id,
-            },
-            (tagErr, tagResults: Tag[]) => {
-              if (tagErr) throw tagErr;
+        const response: GetTrendResponse[] = [];
+        await async.eachSeries(
+          results,
+          (data, callback) => {
+            connection.query(
+              {
+                sql: `select * from tags where tags.id in (SELECT trend_tags.tag_id FROM trend_tags WHERE trend_tags.trend_id = ?)`,
+                values: data.trend.id,
+              },
+              (tagErr, tagResults: Tag[]) => {
+                if (tagErr) throw tagErr;
 
-              const response = {
-                ...result.trend,
-                ogp: result.ogp,
-                tags: tagResults,
-              };
+                response.push({
+                  ...data.trend,
+                  ogp: data.ogp,
+                  tags: tagResults,
+                });
 
-              res.json(response);
-            }
-          );
-        });
+                callback();
+              }
+            );
+          },
+          () => {
+            res.json(response);
+          }
+        );
       }
     );
   },

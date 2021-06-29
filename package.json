@@ -23,6 +23,8 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
+    "@types/async": "^3.2.6",
+    "async": "^3.2.0",
     "axios": "^0.21.1",
     "db-migrate": "^0.11.12",
     "express": "^4.17.1",

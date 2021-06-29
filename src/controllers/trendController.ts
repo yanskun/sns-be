@@ -21,7 +21,7 @@ type GetTrendResponse = {
   tags: Tag[];
 };
 
-type Result = {
+type GetTrendResult = {
   trend: Trend;
   ogp: OGP;
 };
@@ -37,7 +37,7 @@ const TrendController = {
         sql: 'SELECT * FROM trends trend INNER JOIN ogps ogp ON ogp.trend_id = trend.id',
         nestTables: true,
       },
-      (error, results: Result[], fields) => {
+      async (error, results: GetTrendResult[], fields) => {
         if (error) throw error;
 
         results.map((result) => {

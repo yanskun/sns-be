@@ -24,8 +24,10 @@
   },
   "dependencies": {
     "@types/async": "^3.2.6",
+    "@types/uuid": "^8.3.0",
     "async": "^3.2.0",
     "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "db-migrate": "^0.11.12",
     "express": "^4.17.1",
     "js-base64": "^3.6.1",

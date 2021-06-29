@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import mysql from 'mysql2';
-import { GetOGPResponse } from './ogpController';
+import { Trend, OGP, Tag } from '../types';
 
 const connection = mysql.createConnection({
   host: 'db',
@@ -12,36 +12,53 @@ const connection = mysql.createConnection({
 
 connection.connect();
 
-type Trend = {
-  id: string;
-  comment: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 type GetTrendResponse = {
   id: string;
   comment: string;
   createdAt: string;
   updatedAt: string;
-} & GetOGPResponse;
+  ogp: OGP;
+  tags: Tag[];
+};
+
+type Result = {
+  trend: Trend;
+  ogp: OGP;
+};
 
 export interface TrendController {
   getTrends: Promise<GetTrendResponse[]>;
 }
 
-// select trend.id, trend.comment, trend.created_at, trend.updated_at, ogp.href, ogp.title, ogp.description, ogp.src from trends trend inner join ogps ogp where ogp.trend_id = trend.id
-
 const TrendController = {
   getTrends: async (req: Request, res: Response, next: NextFunction) => {
     connection.query(
       {
-        sql: 'select * from trends trend inner join ogps ogp where ogp.trend_id = trend.id',
+        sql: 'SELECT * FROM trends trend INNER JOIN ogps ogp ON ogp.trend_id = trend.id',
         nestTables: true,
       },
-      (error, results: Trend[], fields) => {
+      (error, results: Result[], fields) => {
         if (error) throw error;
-        res.json(results);
+
+        results.map((result) => {
+          connection.query(
+            {
+              sql: `select * from tags where tags.id in (SELECT trend_tags.tag_id FROM trend_tags WHERE trend_tags.trend_id = ?)`,
+              values: result.trend.id,
+            },
+            (tagErr, tagResults: Tag[]) => {
+              if (tagErr) throw tagErr;
+
+              const response = {
+                ...result.trend,
+                ogp: result.ogp,
+                tags: tagResults,
+              };
+
+              res.json(response);
+            }
+          );
+        });
       }
     );
   },

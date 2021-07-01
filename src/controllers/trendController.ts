@@ -111,7 +111,7 @@ const TrendController = {
       })
       .join(';');
 
-    const sql = `${postTrendSQL};${postOGPSQL};${tagQueries}`;
+    const sql = `begin;${postTrendSQL};${postOGPSQL};${tagQueries};commit;`;
     connection.query({ sql }, (err) => {
       if (err) {
         throw err;

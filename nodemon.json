@@ -3,5 +3,5 @@
     "src"
   ],
   "ext": "ts",
-  "exec": "yarn run ts-node ./src/index.ts"
+  "exec": "yarn run ts-node ./src/app.ts"
 }

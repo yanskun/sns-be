@@ -3,10 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import router from './routes/routes';
 
-const port =
-  process.env.NODE_ENV === 'production'
-    ? 'https://door-server-728fb.web.app/'
-    : 3300;
+const port = process.env.PORT || 3300;
 
 async function bootstrap() {
   const app = express();
